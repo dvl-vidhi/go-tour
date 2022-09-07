@@ -1,0 +1,6 @@
+github.com/gorilla/websocket v1.4.0 h1:WDFjx/TMzVgy9VdMMQi2K2Emtwi2QcUQsztZ/zLaH/Q=
+github.com/gorilla/websocket v1.4.0/go.mod h1:E7qHFY5m1UJ88s3WnNqhKjPHQ0heANvMoAMk2YaljkQ=
+github.com/gorilla/websocket v1.5.0 h1:PPwGk2jz7EePpoHN/+ClbZu8SPxiqlu12wZP/3sWmnc=
+github.com/gorilla/websocket v1.5.0/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
+github.com/quii/learn-go-with-tests v0.0.0-20220904162910-2f268ca8dae8 h1:RBFaX9nhQFpiriWm3FGKuciwNKjkr44YqN4r7z9kHT8=
+github.com/quii/learn-go-with-tests v0.0.0-20220904162910-2f268ca8dae8/go.mod h1:Tj+8i1g8Zi5oxB6zsv8By2Xvr7LMr4zgmh89zQmD+8U=
