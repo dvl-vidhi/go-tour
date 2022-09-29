@@ -14,6 +14,7 @@ type Mail struct {
 	MailSubject []string           `bson:"subject,omitempty" json:"subject,omitempty"`
 	MailBody    *Body              `bson:"body,omitempty" json:"body,omitempty"`
 	SenderName  string             `bson:"sender,omitempty" json:"sender,omitempty"`
+	Attachments []string           `bson:"attachments,omitempty" json:"attachments,omitempty"`
 	Time        time.Time
 }
 
