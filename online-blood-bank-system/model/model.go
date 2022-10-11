@@ -48,4 +48,8 @@ type Patient struct {
 	Active            bool               `bson:"active,omitempty" json:"active,omitempty"`
 }
 
-// type Response struct{} todo
+type Response struct {
+	Success    string      `json:"success,omitempty"`
+	SucessCode string      `json:"successCode,omitempty"`
+	Response   interface{} `json:"response,omitempty"`
+}
