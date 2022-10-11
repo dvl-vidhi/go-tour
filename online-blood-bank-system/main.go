@@ -289,7 +289,7 @@ func main() {
 	http.HandleFunc("/blood-provided-patient-details-id/", bloodProvidedPatient)
 	http.HandleFunc("/search-filter-blood-details/", searchFilterBloodDetails)
 	http.HandleFunc("/jwt", GetJwt)
-	http.Handle("/api", ValidateJWT(saveDonor))
+	// http.Handle("/api", ValidateJWT(saveDonor))
 	log.Println("Server started at 8080")
 	http.ListenAndServe(":8080", nil)
 }

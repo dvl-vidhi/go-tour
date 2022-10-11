@@ -35,17 +35,17 @@ type User struct {
 }
 
 type Patient struct {
-	Id                primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
-	Name              string             `bson:"name,omitempty" json:"name,omitempty"`
-	Age               int64              `bson:"age,omitempty" json:"age,omitempty"`
-	BloodGroup        string             `bson:"blood_group,omitempty" json:"blood_group,omitempty"`
-	Adharcard         string             `bson:"adharcard,omitempty" json:"adharcard,omitempty"`
-	Location          string             `bson:"location,omitempty" json:"location,omitempty"`
-	RequestedUnits    int                `bson:"requested_units,omitempty" json:"requested_units,omitempty"`
-	RequestedTime     time.Time          `bson:"requested_time,omitempty" json:"requested_time,omitempty"`
-	RequestClosedTime time.Time          `bson:"reuest_closed_time,omitempty" json:"reuest_closed_time,omitempty"`
-	IsBloodProvided   bool               `bson:"blood_provided,omitempty" json:"blood_provided,omitempty"`
-	Active            bool               `bson:"active,omitempty" json:"active,omitempty"`
+	Id             primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
+	Name           string             `bson:"name,omitempty" json:"name,omitempty"`
+	Age            int64              `bson:"age,omitempty" json:"age,omitempty"`
+	BloodGroup     string             `bson:"blood_group,omitempty" json:"blood_group,omitempty"`
+	Adharcard      string             `bson:"adharcard,omitempty" json:"adharcard,omitempty"`
+	Location       string             `bson:"location,omitempty" json:"location,omitempty"`
+	RequestedUnits int                `bson:"requested_units,omitempty" json:"requested_units,omitempty"`
+	RequestedTime  time.Time          `bson:"requested_time,omitempty" json:"requested_time,omitempty"`
+	// RequestClosedTime time.Time          `bson:"reuest_closed_time,omitempty" json:"reuest_closed_time,omitempty"`
+	IsBloodProvided bool `bson:"blood_provided,omitempty" json:"blood_provided,omitempty"`
+	// Active            bool               `bson:"active,omitempty" json:"active,omitempty"`
 }
 
 type Response struct {
