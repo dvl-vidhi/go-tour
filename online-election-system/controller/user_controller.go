@@ -100,11 +100,11 @@ func SearchOneUser(w http.ResponseWriter, r *http.Request) {
 		helper.RespondWithError(w, http.StatusBadRequest, "Please provide Id for Search")
 	}
 
-	var dataBody model.User
-	if err := json.NewDecoder(r.Body).Decode(&dataBody); err != nil {
-		helper.RespondWithError(w, http.StatusBadRequest, "Invalid Request")
-		return
-	}
+	// var dataBody model.User
+	// if err := json.NewDecoder(r.Body).Decode(&dataBody); err != nil {
+	// 	helper.RespondWithError(w, http.StatusBadRequest, "Invalid Request")
+	// 	return
+	// }
 
 	user, err := uad.UserFindById(id)
 

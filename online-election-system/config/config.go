@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -32,6 +33,7 @@ func init() {
 
 	err := viper.ReadInConfig()
 	if err != nil {
+		fmt.Println(err)
 		log.Fatal("unable to read config")
 	}
 

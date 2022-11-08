@@ -21,7 +21,7 @@ func Router() *http.ServeMux {
 	router.HandleFunc("/api/election/update/", controller.UpdateElection)
 	router.HandleFunc("/api/election/search/", controller.SearchOneElection)
 	router.HandleFunc("/api/election/search-by-filter", controller.SearchMultipleElection)
-	router.HandleFunc("/api/election/deactivate", controller.DeactivateElection)
+	router.HandleFunc("/api/election/deactivate/", controller.DeactivateElection)
 
 	router.HandleFunc("/api/login", controller.Login)
 
