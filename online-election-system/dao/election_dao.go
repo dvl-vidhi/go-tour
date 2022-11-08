@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 
+	"online-election-system/helper"
 	"online-election-system/model"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -67,37 +68,32 @@ func (e *ElectionDAO) AddCandidate(req model.CandidatesRequest) (bson.M, error) 
 	if err != nil {
 		return UpdatedElection, errors.New("unable to query db")
 	}
-	userId, err := primitive.ObjectIDFromHex(req.UserId)
+	UserIdHex, err := primitive.ObjectIDFromHex(req.UserId)
 	if err != nil {
 		return UpdatedElection, err
 	}
-	_, err = UserCollection.Find(Userctx, bson.D{primitive.E{Key: "_id", Value: userId}})
+	_, err = UserCollection.Find(Userctx, bson.D{primitive.E{Key: "_id", Value: UserIdHex}})
 	if err != nil {
 		return UpdatedElection, err
 	}
-
-	msg, err := UploadFile(req.VoteSign)
+	var uploadPath = "upload/voteSign/"
+	msg, err := helper.UploadFile(req.VoteSign, uploadPath)
 	if err != nil {
 		log.Println(err)
 		return UpdatedElection, errors.New("Unable to upload file")
 	}
 	fmt.Println("Upload file:", msg)
 
-	for cur.Next(Electionctx) {
-		var e model.Election
-
-		err := cur.Decode(&e)
-
-		if err != nil {
-			return UpdatedElection, err
-		}
-
-		Elections = append(Elections, &e)
+	Elections, err = convertDbResultIntoElectionStruct(cur)
+	if err != nil {
+		return UpdatedElection, err
 	}
-	var Candidates []model.Candidates
-	Candidates = Elections[0].Candidates
-	// Candidates[].find
-	UserIdHex, err := primitive.ObjectIDFromHex(req.UserId)
+
+	if len(Elections) == 0 {
+		return UpdatedElection, mongo.ErrNoDocuments
+	}
+
+	var Candidates = Elections[0].Candidates
 
 	for i := range Candidates {
 		fmt.Println(Candidates[i].UserId.String())
@@ -108,7 +104,7 @@ func (e *ElectionDAO) AddCandidate(req model.CandidatesRequest) (bson.M, error) 
 
 	filter := bson.D{primitive.E{Key: "_id", Value: electionId}}
 	UpdateQuery := bson.D{}
-	UpdateQuery = append(UpdateQuery, primitive.E{Key: "user_id", Value: userId})
+	UpdateQuery = append(UpdateQuery, primitive.E{Key: "user_id", Value: UserIdHex})
 	UpdateQuery = append(UpdateQuery, primitive.E{Key: "name", Value: req.Name})
 	UpdateQuery = append(UpdateQuery, primitive.E{Key: "commitments", Value: req.Commitments})
 	UpdateQuery = append(UpdateQuery, primitive.E{Key: "vote_sign", Value: req.VoteSign})
@@ -140,23 +136,11 @@ func (e *ElectionDAO) ElectionFindById(id string) ([]*model.Election, error) {
 		return Elections, errors.New("unable to query db")
 	}
 
-	for cur.Next(Electionctx) {
-		var e model.Election
+	Elections, err = convertDbResultIntoElectionStruct(cur)
 
-		err := cur.Decode(&e)
-
-		if err != nil {
-			return Elections, err
-		}
-
-		Elections = append(Elections, &e)
-	}
-
-	if err := cur.Err(); err != nil {
+	if err != nil {
 		return Elections, err
 	}
-
-	cur.Close(Electionctx)
 
 	if len(Elections) == 0 {
 		return Elections, mongo.ErrNoDocuments
@@ -179,17 +163,9 @@ func (e *ElectionDAO) FilterOnElectionDetails(req model.Election) ([]*model.Elec
 		query = append(query, primitive.E{Key: "election_status", Value: req.ElectionStatus})
 	}
 	if req.ElectionDate != "" {
-		// electionDate, err := convertDate(req.ElectionDate)
-		// if err != nil {
-		// 	return Elections, "Error Occurred", err
-		// }
 		query = append(query, primitive.E{Key: "election_date", Value: req.ElectionDate})
 	}
 	if req.ResultDate != "" {
-		// resultDate, err := convertDate(req.ResultDate)
-		// if err != nil {
-		// 	return Elections, "Error Occurred", err
-		// }
 		query = append(query, primitive.E{Key: "result_date", Value: req.ElectionDate})
 	}
 
@@ -199,23 +175,11 @@ func (e *ElectionDAO) FilterOnElectionDetails(req model.Election) ([]*model.Elec
 		return Elections, errors.New("unable to query db")
 	}
 
-	for cur.Next(Electionctx) {
-		var e model.Election
+	Elections, err = convertDbResultIntoElectionStruct(cur)
 
-		err := cur.Decode(&e)
-
-		if err != nil {
-			return Elections, err
-		}
-
-		Elections = append(Elections, &e)
-	}
-
-	if err := cur.Err(); err != nil {
+	if err != nil {
 		return Elections, err
 	}
-
-	cur.Close(Electionctx)
 
 	if len(Elections) == 0 {
 		return Elections, mongo.ErrNoDocuments
@@ -236,7 +200,6 @@ func (e *ElectionDAO) Update(election model.Election, id string) (bson.M, error)
 
 	update := bson.D{primitive.E{Key: "$set", Value: election}}
 
-	// e := &model.User{}
 	err = ElectionCollection.FindOneAndUpdate(Electionctx, filter, update).Decode(&updatedElection)
 	if err != nil {
 		return updatedElection, err
@@ -249,34 +212,17 @@ func (e *ElectionDAO) Update(election model.Election, id string) (bson.M, error)
 	return updatedElection, nil
 }
 
-func (epd *ElectionDAO) VerifyCandidate(candidatesRequest model.CandidatesRequest, id string) (bson.M, error) {
+func (e *ElectionDAO) VerifyCandidate(candidatesRequest model.CandidatesRequest, id string) (bson.M, error) {
 	var updatedElection bson.M
 	idHex, err := primitive.ObjectIDFromHex(id)
 	var adminData []*model.User
 
 	data, err := UserCollection.Find(Userctx, bson.D{primitive.E{Key: "email", Value: candidatesRequest.Email}})
 	adminData, err = convertDbResultIntoUserStruct(data)
-	// adminData, err = convertDbResultIntoUserStruct(data)
 	if err != nil {
 		return updatedElection, err
 	}
 	filter := bson.D{}
-	flag := true
-
-	if id != "" {
-		idHex, err := primitive.ObjectIDFromHex(id)
-		if err != nil {
-			return updatedElection, err
-		}
-		filter = append(filter, primitive.E{Key: "_id", Value: idHex})
-		flag = false
-	}
-	if flag {
-		if candidatesRequest.Email != "" {
-			filter = append(filter, primitive.E{Key: "email", Value: bson.M{"$regex": candidatesRequest.Email}})
-			flag = false
-		}
-	}
 
 	var Elections []*model.Election
 
@@ -286,20 +232,18 @@ func (epd *ElectionDAO) VerifyCandidate(candidatesRequest model.CandidatesReques
 		return updatedElection, errors.New("unable to query db")
 	}
 
-	for cur.Next(Electionctx) {
-		var e model.Election
+	Elections, err = convertDbResultIntoElectionStruct(cur)
 
-		err := cur.Decode(&e)
-
-		if err != nil {
-			return updatedElection, err
-		}
-
-		Elections = append(Elections, &e)
+	if err != nil {
+		return updatedElection, err
 	}
-	var Candidates []model.Candidates
-	Candidates = Elections[0].Candidates
-	// Candidates[].find
+
+	if len(Elections) == 0 {
+		return updatedElection, mongo.ErrNoDocuments
+	}
+
+	var Candidates = Elections[0].Candidates
+
 	UserIdHex, err := primitive.ObjectIDFromHex(candidatesRequest.UserId)
 
 	for i := range Candidates {
@@ -314,7 +258,6 @@ func (epd *ElectionDAO) VerifyCandidate(candidatesRequest model.CandidatesReques
 	filter = bson.D{primitive.E{Key: "_id", Value: idHex}}
 	update := bson.D{primitive.E{Key: "$set", Value: Elections[0]}}
 
-	// updatedDocument := &model.User{}
 	err = ElectionCollection.FindOneAndUpdate(Electionctx, filter, update).Decode(&updatedElection)
 	if err != nil {
 		return updatedElection, err
@@ -324,4 +267,17 @@ func (epd *ElectionDAO) VerifyCandidate(candidatesRequest model.CandidatesReques
 		return updatedElection, errors.New("Data not present in db given by Id or it is deactivated")
 	}
 	return updatedElection, err
+}
+
+func convertDbResultIntoElectionStruct(fetchDataCursor *mongo.Cursor) ([]*model.Election, error) {
+	var finaldata []*model.Election
+	for fetchDataCursor.Next(Userctx) {
+		var data model.Election
+		err := fetchDataCursor.Decode(&data)
+		if err != nil {
+			return finaldata, err
+		}
+		finaldata = append(finaldata, &data)
+	}
+	return finaldata, nil
 }

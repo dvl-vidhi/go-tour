@@ -17,3 +17,12 @@ type User struct {
 	PersonalInfo PersonalInfo         `bson:"personal_info,omitempty" json:"personal_info,omitempty"`
 	Voted        []primitive.ObjectID `bson:"voted" json:"voted"`
 }
+
+type UserFilter struct {
+	Role       string `bson:"role" json:"role"`
+	Name       string `bson:"name" json:"name"`
+	IsVerified bool   `bson:"is_verified" json:"is_verified"`
+	FatherName string `bson:"father_name,omitempty" json:"father_name,omitempty"`
+	City       string `bson:"city,omitempty" json:"city,omitempty"`
+	State      string `bson:"state,omitempty" json:"state,omitempty"`
+}

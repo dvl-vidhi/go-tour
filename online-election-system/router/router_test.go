@@ -11,14 +11,6 @@ import (
 )
 
 func TestAddUser(t *testing.T) {
-	//
-	// handler := func(w http.ResponseWriter, r *http.Request) {
-	// 	// here we write our expected response, in this case, we return a
-	// 	// JSON string which is typical when dealing with REST APIs
-	// 	io.WriteString(w, "{ \"success\": true}")
-
-	// }
-
 	payload := strings.NewReader(`{
 		"role": "user",
 		"name": "Lorem5",
@@ -50,8 +42,7 @@ func TestAddUser(t *testing.T) {
 	req.Header.Add("Content-Type", "application/json")
 
 	w := httptest.NewRecorder()
-	// handler(w, req)
-	// http.NewServeMux().HandleFunc("localhost:8080/api/user/search/63635d75a68e40fe497eac67", controller.SearchOneUser)
+
 	handler := http.HandlerFunc(controller.AddUser)
 
 	handler.ServeHTTP(w, req)
@@ -80,13 +71,6 @@ func TestAddUser(t *testing.T) {
 }
 
 func TestVerifyUser(t *testing.T) {
-	//
-	// handler := func(w http.ResponseWriter, r *http.Request) {
-	// 	// here we write our expected response, in this case, we return a
-	// 	// JSON string which is typical when dealing with REST APIs
-	// 	io.WriteString(w, "{ \"success\": true}")
-
-	// }
 
 	payload := strings.NewReader(`{
 		"role": "admin",
@@ -99,8 +83,6 @@ func TestVerifyUser(t *testing.T) {
 	req.Header.Add("Content-Type", "application/json")
 
 	w := httptest.NewRecorder()
-	// handler(w, req)
-	// http.NewServeMux().HandleFunc("localhost:8080/api/user/search/63635d75a68e40fe497eac67", controller.SearchOneUser)
 	handler := http.HandlerFunc(controller.VerifyUser)
 
 	handler.ServeHTTP(w, req)
@@ -129,13 +111,6 @@ func TestVerifyUser(t *testing.T) {
 }
 
 func TestUpdateUser(t *testing.T) {
-	//
-	// handler := func(w http.ResponseWriter, r *http.Request) {
-	// 	// here we write our expected response, in this case, we return a
-	// 	// JSON string which is typical when dealing with REST APIs
-	// 	io.WriteString(w, "{ \"success\": true}")
-
-	// }
 
 	payload := strings.NewReader(`{
 		"role": "admin",
@@ -174,8 +149,6 @@ func TestUpdateUser(t *testing.T) {
 	req.Header.Add("Content-Type", "application/json")
 
 	w := httptest.NewRecorder()
-	// handler(w, req)
-	// http.NewServeMux().HandleFunc("localhost:8080/api/user/search/63635d75a68e40fe497eac67", controller.SearchOneUser)
 	handler := http.HandlerFunc(controller.UpdateUser)
 
 	handler.ServeHTTP(w, req)
@@ -204,14 +177,6 @@ func TestUpdateUser(t *testing.T) {
 }
 
 func TestSearchOneUser(t *testing.T) {
-	//
-	// handler := func(w http.ResponseWriter, r *http.Request) {
-	// 	// here we write our expected response, in this case, we return a
-	// 	// JSON string which is typical when dealing with REST APIs
-	// 	io.WriteString(w, "{ \"success\": true}")
-
-	// }
-
 	req := httptest.NewRequest("GET", "/api/user/search/63635d75a68e40fe497eac67", nil)
 	req.Header.Add("Content-Type", "application/json")
 
@@ -246,13 +211,6 @@ func TestSearchOneUser(t *testing.T) {
 }
 
 func TestSearchMultipleUser(t *testing.T) {
-	//
-	// handler := func(w http.ResponseWriter, r *http.Request) {
-	// 	// here we write our expected response, in this case, we return a
-	// 	// JSON string which is typical when dealing with REST APIs
-	// 	io.WriteString(w, "{ \"success\": true}")
-
-	// }
 
 	payload := strings.NewReader(`{
 		"role": "user",
@@ -267,8 +225,6 @@ func TestSearchMultipleUser(t *testing.T) {
 	req.Header.Add("Content-Type", "application/json")
 
 	w := httptest.NewRecorder()
-	// handler(w, req)
-	// http.NewServeMux().HandleFunc("localhost:8080/api/user/search/63635d75a68e40fe497eac67", controller.SearchOneUser)
 	handler := http.HandlerFunc(controller.SearchMultipleUser)
 
 	handler.ServeHTTP(w, req)
@@ -297,20 +253,11 @@ func TestSearchMultipleUser(t *testing.T) {
 }
 
 func TestDeleteUser(t *testing.T) {
-	//
-	// handler := func(w http.ResponseWriter, r *http.Request) {
-	// 	// here we write our expected response, in this case, we return a
-	// 	// JSON string which is typical when dealing with REST APIs
-	// 	io.WriteString(w, "{ \"success\": true}")
-
-	// }
 
 	req := httptest.NewRequest("DELETE", "/api/user/delete/6369cf4d1047aa38379d6206", nil)
 	req.Header.Add("Content-Type", "application/json")
 
 	w := httptest.NewRecorder()
-	// handler(w, req)
-	// http.NewServeMux().HandleFunc("localhost:8080/api/user/search/63635d75a68e40fe497eac67", controller.SearchOneUser)
 	handler := http.HandlerFunc(controller.DeleteUser)
 
 	handler.ServeHTTP(w, req)

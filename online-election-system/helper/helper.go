@@ -2,7 +2,13 @@ package helper
 
 import (
 	"encoding/json"
+	"fmt"
+	"io"
+	"log"
 	"net/http"
+	"net/url"
+	"os"
+	"strings"
 )
 
 type Response struct {
@@ -26,4 +32,34 @@ func RespondWithJson(w http.ResponseWriter, code int, message string, success bo
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
 	w.Write(resp.ToJson())
+}
+
+func UploadFile(path string, uploadPath string) (string, error) {
+	err := os.MkdirAll(uploadPath, os.ModePerm)
+	if err != nil {
+		return "", err
+	}
+
+	fileURL, err := url.Parse(path)
+	if err != nil {
+		return "", err
+	}
+	segments := strings.Split(fileURL.Path, "/")
+	fileName := segments[len(segments)-1]
+	fileName = uploadPath + fileName
+	// Create blank file
+	file, err := os.Create(fileName)
+	if err != nil {
+		return "", err
+	}
+
+	resp, err := os.Open(path)
+	if err != nil {
+		log.Println(err)
+		return "", err
+	}
+	defer resp.Close()
+	size, err := io.Copy(file, resp)
+	defer file.Close()
+	return "File Downloaded with size :" + fmt.Sprintf("%v", size), nil
 }

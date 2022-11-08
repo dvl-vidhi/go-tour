@@ -8,3 +8,5 @@ mvnw.cmd
 bin/
 city-search-project/data/download/
 city-search-project/font/
+online-election-system/upload/
+online-election-system/router/upload

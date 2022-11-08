@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"online-election-system/config"
 	"online-election-system/dao"
 	"online-election-system/helper"
 	"online-election-system/model"
@@ -14,7 +15,10 @@ var ead = dao.ElectionDAO{}
 
 func init() {
 	ead.Server = "mongodb://localhost:27017/"
-	ead.Database = "OnlineElection"
+	ead.Database = config.APP_CONFIG.Database
+	if config.APP_CONFIG.Environment == "test" {
+		ead.Database = config.APP_CONFIG.TestDatabase
+	}
 	ead.Collection = "Election"
 
 	ead.ElectionConnect()

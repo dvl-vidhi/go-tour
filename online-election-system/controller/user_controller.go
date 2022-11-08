@@ -5,17 +5,23 @@ import (
 	"fmt"
 	"net/http"
 	"online-election-system/auth"
+	"online-election-system/config"
 	"online-election-system/dao"
 	"online-election-system/helper"
 	"online-election-system/model"
 	"strings"
 )
 
+// var Database = []byte(config.APP_CONFIG.Database)
+
 var uad = dao.UserDAO{}
 
 func init() {
 	uad.Server = "mongodb://localhost:27017/"
-	uad.Database = "OnlineElection"
+	uad.Database = config.APP_CONFIG.Database
+	if config.APP_CONFIG.Environment == "test" {
+		uad.Database = config.APP_CONFIG.TestDatabase
+	}
 	uad.Collection = "User"
 
 	uad.UserConnect()
@@ -121,11 +127,11 @@ func SearchMultipleUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var dataBody model.User
-	if err := json.NewDecoder(r.Body).Decode(&dataBody); err != nil {
-		helper.RespondWithError(w, http.StatusBadRequest, "Invalid Request")
-		return
-	}
+	var dataBody model.UserFilter
+	// if err := json.NewDecoder(r.Body).Decode(&dataBody); err != nil {
+	// 	helper.RespondWithError(w, http.StatusBadRequest, "Invalid Request")
+	// 	return
+	// }
 
 	user, err := uad.FilterOnUsersDetails(dataBody)
 
